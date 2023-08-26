@@ -1,0 +1,50 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-gateway-01
+  namespace: app01
+spec:
+  selector:
+    istio: gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "app01.127.0.0.1.nip.io"
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: istio-vs-01
+  namespace: app01
+spec:
+  hosts:
+  - "app01.127.0.0.1.nip.io"
+  gateways:
+  - istio-gateway-01
+  http:
+  - name: 'route-service-a'
+    match:
+    - uri:
+        prefix: /appA
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: service-a
+  - name: 'route-service-b'
+    match:
+    - uri:
+        prefix: /appB
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: service-b
