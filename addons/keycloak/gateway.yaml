@@ -1,8 +1,8 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: istio-gateway-grafana
-  namespace: istio-system
+  name: istio-gateway-keycloak
+  namespace: default
 spec:
   selector:
     istio: ingressgateway
@@ -12,26 +12,26 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "grafana.127.0.0.1.nip.io"
+    - "keycloak.127.0.0.1.nip.io"
 ---
 
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: istio-vs-grafana
-  namespace: istio-system
+  name: istio-vs-keycloak
+  namespace: default
 spec:
   hosts:
-  - "grafana.127.0.0.1.nip.io"
+  - "keycloak.127.0.0.1.nip.io"
   gateways:
-  - istio-gateway-grafana
+  - istio-gateway-keycloak
   http:
-  - name: 'grafana-route'
+  - name: 'keycloak-route'
     match:
     - uri:
         prefix: /
     route:
     - destination:
         port:
-          number: 3000
-        host: grafana
+          number: 8080
+        host: keycloak

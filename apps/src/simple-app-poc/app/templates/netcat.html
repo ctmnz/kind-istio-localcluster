@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Service Checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link href="/static/dashboard.css" rel="stylesheet">
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>  
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>  
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>  
+  </head>
+  <body>
+
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/"> <i class='fas fa-table-tennis' style='font-size:32px;color:white'></i> Service Ping/Pong</a>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <span data-feather="home"></span>
+                  Home <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/netcat">
+                  Netcat
+                </a>
+              </li>
+              <li class="nav-item">
+                <a id="webssh" class="nav-link" href="/">
+                  SSH Client
+                </a>
+              </li>
+            </ul>
+
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">Netcat</h1>
+          </div>
+
+          <div id="root" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+          </div> 
+      <br />
+      <br />
+      <br />
+      <div> Trace result:<br /> <span id="cmdresult"></span></div>
+
+        </main>
+
+      </div>
+    </div>
+
+
+
+    <script type="text/babel">  
+
+      class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: '',
+      host: '',
+      port: '',
+      timeout: '',
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+    this.setState({
+    [name]: value
+    });
+/*
+    this.setState({
+    value: event.target.value,
+    host: event.target.host,
+    port: event.target.port,
+    timeout: event.target.timeout,
+    });
+    */
+  }
+
+  handleSubmit(event) {
+  
+        document.getElementById('cmdresult').innerHTML = '<img src="/static/mr-bean-wating-gif.gif"></img><br />'; 
+      fetch('/api/netcat?host='+ this.state.host + '&port=' + this.state.port + '&timeout=' + this.state.timeout)
+      .then(res => res.json())
+      .then(data => {
+      //  alert('response: ' + data.response + ' Error: ' + data.error);
+        document.getElementById('cmdresult').innerHTML = '<br /> Response: ' + data.response + '<br /> Error: ' + data.error;
+      });
+
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+      <table>
+      <tbody>
+
+        <tr>
+        <td>
+        <label>
+          Host:
+        </label>
+        </td>
+        <td>
+          <input name="host" type="text" value={this.state.host} onChange={this.handleChange} />
+        </td>
+        </tr>
+
+        <tr>
+        <td>
+        <label>
+          Port:
+        </label>
+        </td>
+        <td>
+          <input name="port" type="text" value={this.state.port} onChange={this.handleChange} />
+        </td>
+        </tr>
+        
+        <tr>
+        <td>
+        <label>
+          Timeout:
+        </label>
+        </td>
+        <td>
+          <input name="timeout" type="text" value={this.state.timeout} onChange={this.handleChange} />
+        </td>
+        </tr>
+
+       </tbody>
+       </table>
+
+        <input type="submit" value="PING" />
+      </form>
+    );
+  }
+}
+
+    ReactDOM.render(
+      <NameForm />,
+      document.getElementById("root")
+    );
+
+    </script>
+
+
+
+    <script>
+      document.getElementById('webssh').href = window.location.protocol + "//" + window.location.hostname + ":8888/";
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
+
