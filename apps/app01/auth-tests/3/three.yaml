@@ -1,0 +1,27 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: jwt-my-app-auth
+  namespace: app01
+spec:
+  selector:
+    matchLabels:
+      app: service-a
+  jwtRules:
+  - issuer: http://keycloak.127.0.0.1.nip.io/realms/master
+    jwksUri: http://keycloak.keycloak-ns.svc.cluster.local:30034/realms/master/protocol/openid-connect/certs
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: frontend-my-app-policy
+  namespace: app01
+spec:
+  selector:
+    matchLabels:
+      app: service-a
+  action: DENY
+  rules:
+  - from:
+    - source:
+        notRequestPrincipals: ["*"]

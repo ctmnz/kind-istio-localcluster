@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: example-auth-policy
+  namespace: app01
+spec:
+  action: CUSTOM
+  provider:
+    name: "oauth2-proxy"
+  rules:
+  - to:
+    - operation:
+        hosts:
+        - "app01.127.0.0.1.nip.io"
+        # Uncomment if authorization requried base on path match
+        paths: ["/appA"]  

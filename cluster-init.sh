@@ -49,6 +49,11 @@ kubectl apply -f ./apps/grafana/gateway.yaml
 kubectl apply -f ./apps/kiali-gateway/gateway.yaml
 
 
+### Install Keycloak and ingress http://keycloak.127.0.0.1.nip.io/
+kubectl apply -f ./addons/keycloak/keycloak.yaml
+kubectl apply -f ./addons/keycloak/gateway.yaml
+
+
 ### Building the simple docker app (and upload it into the kind cluster)
 #docker build -t simple-app -f apps/src/simple-app-poc/Dockerfile apps/src/simple-app-poc
 

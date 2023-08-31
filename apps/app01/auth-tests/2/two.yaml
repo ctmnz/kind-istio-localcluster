@@ -1,0 +1,26 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: RAapp01
+  namespace: app01
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  jwtRules:
+  - issuer: "issuer-foo"
+    jwksUri: https://example.com/.well-known/jwks.json
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: APapp01
+  namespace: app01
+spec:
+  selector:
+    matchLabels:
+      app: app01
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
